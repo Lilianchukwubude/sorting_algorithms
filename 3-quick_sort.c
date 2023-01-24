@@ -1,95 +1,78 @@
 #include "sort.h"
-
-void divide(int beg, int pivot, int *i, size_t size);
-int partition(int beg, int pivot, int *i, size_t size);
-void swap_int(int *a, int *b);
 /**
- * quick_sort - sorts an array of integers in ascending order
- * @array: array to be sorted
- * @size: size of the array
+*swap - the positions of two elements into an array
+*@array: array
+*@item1: array element
+*@item2: array element
+*/
+void swap(int *array, ssize_t item1, ssize_t item2)
+{
+	int tmp;
+
+	tmp = array[item1];
+	array[item1] = array[item2];
+	array[item2] = tmp;
+}
+/**
+ *lomuto_partition - lomuto partition sorting scheme implementation
+ *@array: array
+ *@first: first array element
+ *@last: last array element
+ *@size: size array
+ *Return: return the position of the last element sorted
+ */
+int lomuto_partition(int *array, ssize_t first, ssize_t last, size_t size)
+{
+	int pivot = array[last];
+	ssize_t current = first, finder;
+
+	for (finder = first; finder < last; finder++)
+	{
+		if (array[finder] < pivot)
+		{
+			if (array[current] != array[finder])
+			{
+				swap(array, current, finder);
+				print_array(array, size);
+			}
+			current++;
+		}
+	}
+	if (array[current] != array[last])
+	{
+		swap(array, current, last);
+		print_array(array, size);
+	}
+	return (current);
+}
+/**
+ *qs - qucksort algorithm implementation
+ *@array: array
+ *@first: first array element
+ *@last: last array element
+ *@size: array size
+ */
+void qs(int *array, ssize_t first, ssize_t last, int size)
+{
+	ssize_t position = 0;
+
+
+	if (first < last)
+	{
+		position = lomuto_partition(array, first, last, size);
+
+		qs(array, first, position - 1, size);
+		qs(array, position + 1, last, size);
+	}
+}
+/**
+ *quick_sort - prepare the terrain to quicksort algorithm
+ *@array: array
+ *@size: array size
  */
 void quick_sort(int *array, size_t size)
 {
-	int beg = 0, pivot;
-
-	if (array && size > 1)
-	{
-		pivot = (size - 1);
-		divide(beg, pivot, array, size);
-	}
-}
-/**
-* divide - recursively partition
-* @beg: beginning of divided array
-* @pivot: end of divided array
-* @i: the beginning of the array
-* @size: size of array
-**/
-void divide(int beg, int pivot, int *i, size_t size)
-{
-	int first, second, np;
-
-	if (beg < pivot)
-	{
-		second = partition(beg, pivot, i, size);
-		first = beg;
-		np = second - 1;
-		if (first != np && second != pivot)
-			np--;
-		divide(first, np, i, size);
-		divide(second, pivot, i, size);
-	}
-}
-/**
-* partition - divides an array
-* @beg: beginning of array separated
-* @pivot: end of array separated
-* @i: the beginning of array
-* @size: size of array
-* Return: the new beginning
-**/
-int partition(int beg, int pivot, int *i, size_t size)
-{
-	int temp;
-
-	temp = beg;
-	while (temp != pivot)
-	{
-		if (i[temp] < i[pivot])
-		{
-			if (temp != beg)
-			{
-				swap_int(i + temp, i + beg);
-				print_array(i, size);
-			}
-			temp++;
-			beg++;
-		}
-		else
-			temp++;
-	}
-	if (beg != pivot)
-	{
-		if (i[beg] > i[pivot])
-		{
-			swap_int(i + pivot, i + beg);
-			print_array(i, size);
-		}
-		beg++;
-	}
-	return (beg);
-}
-
-/**
-  * swap_int - swaps the values of two integers
-  * @a: take an int
-  * @b: take an int
-  */
-void swap_int(int *a, int *b)
-{
-	int temp;
-
-	temp = *a;
-	*a = *b;
-	*b = temp;
+	if (!array || size < 2)
+		return;
+	qs(array, 0, size - 1, size);
 }
